@@ -5,3 +5,5 @@
 
 void printmenu();
 int gameplay();
+void draw_borders();
+void level1();
