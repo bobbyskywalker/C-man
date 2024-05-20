@@ -1,12 +1,44 @@
+#include <stdlib.h>
+#include <stdint.h>
 #include "curses.h"
 #include "gamefiles.h"
 
 #define VERTICAL 30
 #define HORIZONTAL 100
-
+#define CAPACITY 3000
 //borders 30 / 100
 
-void draw_borders(){
+typedef struct vector {
+    int x;
+    int y;
+} vec;
+
+
+//spawning berries, generic, adjustable loop
+void spawn_berries(berrytrack berry_tracker[35][104]) {
+    vec berry = {0, 0};
+    chtype is_berryspot;
+    for (int i = 4, j = 22; j < 100; i++) {
+        bool berry_status = false;
+        berry.x = i;
+        berry.y = j;
+        if (berry_tracker[i - 4][j - 22].iseaten == true){
+            berry_status = true;
+        }
+        is_berryspot = get_char_at(stdscr, berry.x, berry.y);
+        char isblank = is_berryspot & A_CHARTEXT;
+        if (isblank == '-' || isblank == '|' || berry_status) { ;
+        } else {
+            mvaddch(berry.x, berry.y, '.');
+        }
+        if (i == 26) {
+            j++;
+            i = 3;
+        }
+    }
+}
+
+void draw_borders() {
     init_pair(4, COLOR_YELLOW, COLOR_BLACK);
     attron(COLOR_PAIR(4));
     char title[] = "C-MAN v.1";
@@ -23,7 +55,7 @@ void draw_borders(){
     attron(COLOR_PAIR(2));
 
     //sides
-    for(int i = 2; i < 4; i++){
+    for (int i = 2; i < 4; i++) {
         mvaddch(i, 20, '|');
         mvaddch(i, 100, '|');
     }
@@ -37,6 +69,6 @@ void draw_borders(){
         mvaddch(3, i, '_');
         mvaddch(27, i, '_');
     }
-        level1();
+    level1();
 }
 
