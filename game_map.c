@@ -5,13 +5,8 @@
 
 #define VERTICAL 30
 #define HORIZONTAL 100
-#define CAPACITY 3000
 //borders 30 / 100
 
-typedef struct vector {
-    int x;
-    int y;
-} vec;
 
 
 //spawning berries, generic, adjustable loop
@@ -22,7 +17,7 @@ void spawn_berries(berrytrack berry_tracker[35][104]) {
         bool berry_status = false;
         berry.x = i;
         berry.y = j;
-        if (berry_tracker[i - 4][j - 22].iseaten == true){
+        if (berry_tracker[i - 4][j - 22].iseaten == true) {
             berry_status = true;
         }
         is_berryspot = get_char_at(stdscr, berry.x, berry.y);
