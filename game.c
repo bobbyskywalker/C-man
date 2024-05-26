@@ -33,15 +33,19 @@ int gameplay() {
     vec *ghost1 = malloc(2 * sizeof(int));
     vec *ghost2 = malloc(2 * sizeof(int));
     vec *ghost3 = malloc(2 * sizeof(int));
+    vec *ghost4 = malloc(2 * sizeof(int));
     ghost1->x = 25; ghost1->y = 6;
     ghost2->x = 90; ghost2->y = 8;
-    ghost3->x = 30; ghost3->y = 22;
+    ghost3->x = 25; ghost3->y = 25;
+    ghost4->x = 90; ghost4->y = 25;
     vec *gdir1 = malloc(2 * sizeof(int));
     gdir1->x = 1; gdir1->y = 0;
     vec *gdir2 = malloc(2 * sizeof(int));
     gdir2->x = 1; gdir2->y = 0;
     vec *gdir3 = malloc(2 * sizeof(int));
     gdir3->x = 0; gdir3->y = 1;
+    vec *gdir4 = malloc(2 * sizeof(int));
+    gdir4->x = 0; gdir4->y = 1;
 
     //berry array
     berrytrack berrytracker[35][104];
@@ -94,10 +98,10 @@ int gameplay() {
         chtype bdcheck = get_char_at(stdscr, pacman.y, pacman.x);
         char character = bdcheck & A_CHARTEXT;
 
-        if (character == '-' || character == '|') {
+        if (character == '_' || character == '|') {
             pacman.x = last_empty_pac.x;
         }
-        if (character == '-' || character == '|') {
+        if (character == '_' || character == '|') {
             pacman.y = last_empty_pac.y;
         } else if (pacman.y == 3) {
             pacman.y++;
@@ -115,6 +119,7 @@ int gameplay() {
         ghost1 = move_ghost(ghost1, gdir1, hit);
         ghost2 = move_ghost(ghost2, gdir2, hit);
         ghost3 = move_ghost(ghost3, gdir3, hit);
+        ghost4 = move_ghost(ghost4, gdir4, hit);
 
         if (lives == 0) {
             break;
@@ -134,6 +139,7 @@ int gameplay() {
         mvaddch(ghost1->y, ghost1->x, '#');
         mvaddstr(ghost2->y, ghost2->x, "#");
         mvaddch(ghost3->y, ghost3->x, '#');
+        mvaddch(ghost4->y, ghost4->x, '#');
         attroff(COLOR_PAIR(5));
         init_pair(4, COLOR_YELLOW, COLOR_BLACK);
         attron(COLOR_PAIR(4));
@@ -155,6 +161,7 @@ int gameplay() {
     attron(COLOR_PAIR(1));
     mvprintw(HEIGHT / 2 - 2, WIDTH / 2 - 9, "SCORE:");
     mvprintw(HEIGHT / 2 - 2, WIDTH / 2 - 2, "%d", score);
+    attroff(COLOR_PAIR(1));
     wgetch(win);
     return 0;
 }

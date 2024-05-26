@@ -22,7 +22,7 @@ void spawn_berries(berrytrack berry_tracker[35][104]) {
         }
         is_berryspot = get_char_at(stdscr, berry.x, berry.y);
         char isblank = is_berryspot & A_CHARTEXT;
-        if (isblank == '-' || isblank == '|' || berry_status) { ;
+        if (isblank == '_' || isblank == '|' || berry_status) { ;
         } else {
             mvaddch(berry.x, berry.y, '.');
         }
@@ -64,6 +64,7 @@ void draw_borders() {
         mvaddch(3, i, '_');
         mvaddch(27, i, '_');
     }
+    attroff(COLOR_PAIR(2));
     level1();
 }
 
