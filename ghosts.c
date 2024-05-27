@@ -35,3 +35,4 @@ vec *move_ghost(vec *ghostcords, vec *gdir, bool *hit) {
     }
     return ghostcords;
 }
+

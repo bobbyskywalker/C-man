@@ -12,7 +12,9 @@ chtype get_char_at(WINDOW *win, int y, int x) {
     return winch(win);
 }
 
-//TODO: power orbs and menu connection
+//TODO: menu connection, scoreboard file save (and print!)
+
+
 
 int gameplay() {
     //initialize screen
@@ -46,9 +48,16 @@ int gameplay() {
     gdir3->x = 0; gdir3->y = 1;
     vec *gdir4 = malloc(2 * sizeof(int));
     gdir4->x = 0; gdir4->y = 1;
+    //true = alive
+    bool ghost_status[4] = {true, true, true, true};
 
     //berry array
     berrytrack berrytracker[35][104];
+
+    //orb variables
+    vec orb = {30, 15};
+    int orb_time = 150;
+    bool orb_effect = false;
 
     int exit = 0;
     bool *hit = false;
@@ -59,14 +68,20 @@ int gameplay() {
         int pressed = wgetch(win);
         vec last_empty_pac = {pacman.x, pacman.y};
 
-        //ghost collision, -1 life
+        //ghost collision, -1 life or eat a ghost
         chtype killcheck = get_char_at(stdscr, pacman.y, pacman.x);
         char killchar = killcheck & A_CHARTEXT;
         if (killchar == '#') hit = (bool *) true;
-        if (hit == true) {
+        if (hit == true && orb_effect == false) {
             lives--;
             hit = false;
+        }else if(hit == true && orb_effect == true){
+            pacman.x == ghost1->x && pacman.y == ghost1->y ? (ghost_status[0] = false), score += 100 : 1;
+            pacman.x == ghost2->x && pacman.y == ghost2->y ? (ghost_status[1] = false), score += 100 : 1;
+            pacman.x == ghost3->x && pacman.y == ghost3->y ? (ghost_status[2] = false), score += 100 : 1;
+            pacman.x == ghost4->x && pacman.y == ghost4->y ? (ghost_status[3] = false), score += 100 : 1;
         }
+
         //key reaction
         switch (pressed) {
             case KEY_LEFT:
@@ -115,32 +130,83 @@ int gameplay() {
             score++;
         }
 
-        //ghosts
+        //power orb consumption
+        if (character == '@'){
+            orb_effect = true;
+        }
+
+        //ghost movement
         ghost1 = move_ghost(ghost1, gdir1, hit);
         ghost2 = move_ghost(ghost2, gdir2, hit);
         ghost3 = move_ghost(ghost3, gdir3, hit);
         ghost4 = move_ghost(ghost4, gdir4, hit);
 
+        //death
         if (lives == 0) {
             break;
         }
+
         erase();
         start_color();
+
         //add map
         draw_borders();
         spawn_berries(berrytracker);
+
+        //power orb spawn/ activate effect
+        if (orb_effect == true){
+            orb.x = rand() % (99 - 21 + 1) + 21;
+            orb.y = rand() % (27 - 4 + 1) + 4;
+            bdcheck = get_char_at(stdscr, orb.y, orb.x);
+            character = bdcheck & A_CHARTEXT;
+            if (character == '_'){
+                orb.y = rand() % (27 - 4 + 1) + 4;
+                orb.x = rand() % (99 - 21 + 1) + 21;
+            }else if (character == '|'){
+                orb.y = rand() % (27 - 4 + 1) + 4;
+                orb.x = rand() % (99 - 21 + 1) + 21;
+            }
+            orb_time--;
+        }else{
+            init_pair(69, COLOR_GREEN, COLOR_BLACK);
+            attron(COLOR_PAIR(69));
+            mvaddch(orb.y, orb.x, '@');
+            attroff(COLOR_PAIR(69));
+        }
+        if (orb_time == 0){
+            orb_time = 150;
+            orb_effect = false;
+        }
+
         //add pac
         init_pair(1, COLOR_YELLOW, COLOR_BLACK);
         attron(COLOR_PAIR(1));
         mvaddch(pacman.y, pacman.x, 'C');
         attroff(COLOR_PAIR(1));
-        init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
-        attron(COLOR_PAIR(5));
-        mvaddch(ghost1->y, ghost1->x, '#');
-        mvaddstr(ghost2->y, ghost2->x, "#");
-        mvaddch(ghost3->y, ghost3->x, '#');
-        mvaddch(ghost4->y, ghost4->x, '#');
+
+        //add ghosts (change color if orb is active)
+        if(orb_effect == false) {
+            init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
+            attron(COLOR_PAIR(5));
+        }else{
+            init_pair(99, COLOR_MAGENTA, COLOR_WHITE);
+        }
+        if(ghost_status[0] != false) {
+            mvaddch(ghost1->y, ghost1->x, '#');
+        }
+        if(ghost_status[1] != false) {
+            mvaddstr(ghost2->y, ghost2->x, "#");
+        }
+        if(ghost_status[2] != false) {
+            mvaddch(ghost3->y, ghost3->x, '#');
+        }
+        if(ghost_status[3] != false) {
+            mvaddch(ghost4->y, ghost4->x, '#');
+        }
         attroff(COLOR_PAIR(5));
+        attron(COLOR_PAIR(99));
+
+        //upper screen signs
         init_pair(4, COLOR_YELLOW, COLOR_BLACK);
         attron(COLOR_PAIR(4));
         mvprintw(2, 95 - 6, "SCORE:");
@@ -152,6 +218,7 @@ int gameplay() {
         attroff(COLOR_PAIR(6));
         usleep(65000);
     }
+
     //game over screen
     erase();
     nodelay(stdscr, FALSE);
@@ -162,6 +229,11 @@ int gameplay() {
     mvprintw(HEIGHT / 2 - 2, WIDTH / 2 - 9, "SCORE:");
     mvprintw(HEIGHT / 2 - 2, WIDTH / 2 - 2, "%d", score);
     attroff(COLOR_PAIR(1));
-    wgetch(win);
+    mvprintw(1, 1, "press esc to exit");
+    int exit_button;
+    while(exit_button != 27){
+       exit_button = wgetch(win);
+    }
+
     return 0;
 }
