@@ -12,14 +12,10 @@ chtype get_char_at(WINDOW *win, int y, int x) {
     return winch(win);
 }
 
-//TODO: menu connection, scoreboard file save (and print!)
-
-
-
-int gameplay() {
+int gameplay(WINDOW *win) {
     //initialize screen
     int screenwidth, screenheight;
-    WINDOW *win = initscr();
+    erase();
     int score = 0;
     int lives = 3;
     char lifestr[] = "<3:";
@@ -36,18 +32,26 @@ int gameplay() {
     vec *ghost2 = malloc(2 * sizeof(int));
     vec *ghost3 = malloc(2 * sizeof(int));
     vec *ghost4 = malloc(2 * sizeof(int));
-    ghost1->x = 25; ghost1->y = 6;
-    ghost2->x = 90; ghost2->y = 8;
-    ghost3->x = 25; ghost3->y = 25;
-    ghost4->x = 90; ghost4->y = 25;
+    ghost1->x = 25;
+    ghost1->y = 6;
+    ghost2->x = 90;
+    ghost2->y = 8;
+    ghost3->x = 25;
+    ghost3->y = 25;
+    ghost4->x = 90;
+    ghost4->y = 25;
     vec *gdir1 = malloc(2 * sizeof(int));
-    gdir1->x = 1; gdir1->y = 0;
+    gdir1->x = 1;
+    gdir1->y = 0;
     vec *gdir2 = malloc(2 * sizeof(int));
-    gdir2->x = 1; gdir2->y = 0;
+    gdir2->x = 1;
+    gdir2->y = 0;
     vec *gdir3 = malloc(2 * sizeof(int));
-    gdir3->x = 0; gdir3->y = 1;
+    gdir3->x = 0;
+    gdir3->y = 1;
     vec *gdir4 = malloc(2 * sizeof(int));
-    gdir4->x = 0; gdir4->y = 1;
+    gdir4->x = 0;
+    gdir4->y = 1;
     //true = alive
     bool ghost_status[4] = {true, true, true, true};
 
@@ -67,7 +71,6 @@ int gameplay() {
         noecho();
         int pressed = wgetch(win);
         vec last_empty_pac = {pacman.x, pacman.y};
-
         //ghost collision, -1 life or eat a ghost
         chtype killcheck = get_char_at(stdscr, pacman.y, pacman.x);
         char killchar = killcheck & A_CHARTEXT;
@@ -75,7 +78,7 @@ int gameplay() {
         if (hit == true && orb_effect == false) {
             lives--;
             hit = false;
-        }else if(hit == true && orb_effect == true){
+        } else if (hit == true && orb_effect == true) {
             pacman.x == ghost1->x && pacman.y == ghost1->y ? (ghost_status[0] = false), score += 100 : 1;
             pacman.x == ghost2->x && pacman.y == ghost2->y ? (ghost_status[1] = false), score += 100 : 1;
             pacman.x == ghost3->x && pacman.y == ghost3->y ? (ghost_status[2] = false), score += 100 : 1;
@@ -103,6 +106,7 @@ int gameplay() {
                 //escape to quit
             case 27:
                 exit = pressed;
+                erase();
                 break;
         }
         pacman.x += dir.x;
@@ -131,7 +135,7 @@ int gameplay() {
         }
 
         //power orb consumption
-        if (character == '@'){
+        if (character == '@') {
             orb_effect = true;
         }
 
@@ -154,26 +158,26 @@ int gameplay() {
         spawn_berries(berrytracker);
 
         //power orb spawn/ activate effect
-        if (orb_effect == true){
+        if (orb_effect == true) {
             orb.x = rand() % (99 - 21 + 1) + 21;
             orb.y = rand() % (27 - 4 + 1) + 4;
             bdcheck = get_char_at(stdscr, orb.y, orb.x);
             character = bdcheck & A_CHARTEXT;
-            if (character == '_'){
+            if (character == '_') {
                 orb.y = rand() % (27 - 4 + 1) + 4;
                 orb.x = rand() % (99 - 21 + 1) + 21;
-            }else if (character == '|'){
+            } else if (character == '|') {
                 orb.y = rand() % (27 - 4 + 1) + 4;
                 orb.x = rand() % (99 - 21 + 1) + 21;
             }
             orb_time--;
-        }else{
+        } else {
             init_pair(69, COLOR_GREEN, COLOR_BLACK);
             attron(COLOR_PAIR(69));
             mvaddch(orb.y, orb.x, '@');
             attroff(COLOR_PAIR(69));
         }
-        if (orb_time == 0){
+        if (orb_time == 0) {
             orb_time = 150;
             orb_effect = false;
         }
@@ -185,22 +189,22 @@ int gameplay() {
         attroff(COLOR_PAIR(1));
 
         //add ghosts (change color if orb is active)
-        if(orb_effect == false) {
+        if (orb_effect == false) {
             init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
             attron(COLOR_PAIR(5));
-        }else{
+        } else {
             init_pair(99, COLOR_MAGENTA, COLOR_WHITE);
         }
-        if(ghost_status[0] != false) {
+        if (ghost_status[0] != false) {
             mvaddch(ghost1->y, ghost1->x, '#');
         }
-        if(ghost_status[1] != false) {
+        if (ghost_status[1] != false) {
             mvaddstr(ghost2->y, ghost2->x, "#");
         }
-        if(ghost_status[2] != false) {
+        if (ghost_status[2] != false) {
             mvaddch(ghost3->y, ghost3->x, '#');
         }
-        if(ghost_status[3] != false) {
+        if (ghost_status[3] != false) {
             mvaddch(ghost4->y, ghost4->x, '#');
         }
         attroff(COLOR_PAIR(5));
@@ -231,9 +235,9 @@ int gameplay() {
     attroff(COLOR_PAIR(1));
     mvprintw(1, 1, "press esc to exit");
     int exit_button;
-    while(exit_button != 27){
-       exit_button = wgetch(win);
+    while (exit_button != 27) {
+        exit_button = wgetch(win);
     }
-
+    erase();
     return 0;
 }

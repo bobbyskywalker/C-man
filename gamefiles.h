@@ -2,12 +2,13 @@
 #define PACMANGAME_GAMEFILES_H
 
 #endif //PACMANGAME_GAMEFILES_H
+
 #include <stdint.h>
 #include "curses.h"
 
 void printmenu();
 
-int gameplay();
+int gameplay(WINDOW *win);
 
 void draw_borders();
 
@@ -20,10 +21,10 @@ typedef struct vector {
     int y;
 } vec;
 
-typedef struct berrytrack{
-    int x,y;
+typedef struct berrytrack {
+    int x, y;
     bool iseaten;
-}berrytrack;
+} berrytrack;
 
 void spawn_berries(berrytrack berry_tracker[35][104]);
 

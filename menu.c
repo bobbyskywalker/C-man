@@ -1,54 +1,74 @@
-#include <stdio.h>
-#include <unistd.h>
 #include "curses.h"
+#include "gamefiles.h"
 
-//bool maybe? to verify which mode are we in OR just put the game inside
+void printhelp(int x, int y) {
+    char arrows[] = {"Use ARROWKEYS to move"};
+    char orbs[] = {"Collect orbs to gain points!"};
+    char ghosts[] = {"Avoid ghosts! If you lose 3 lives, game over :(("};
+    char powerorbs[] = {"Power orbs let you eat ghosts! Eat a ghost for 100 bonus points!"};
+    init_pair(69, COLOR_WHITE, COLOR_BLUE);
+    attron(COLOR_PAIR(69));
+    mvprintw(7, x / 2, arrows);
+    mvprintw(9, x / 2, orbs);
+    mvprintw(11, x / 2, ghosts);
+    mvprintw(13, x / 2, powerorbs);
+    attroff(COLOR_PAIR(69));
+}
 
-void printmenu(){
+void printmenu() {
     const char opt1[] = "Play";
     const char opt2[] = "Help";
     const char opt3[] = "Exit";
+    const char title[] = "-------- C-MAN ---------";
+    bool exit = false, help = false;
     int selection;
     int highlighted = 1, minmenu = 1, maxmenu = 3;
     //start
-    initscr();
-    int x,y;
+    WINDOW *win = initscr();
+    nodelay(stdscr, FALSE);
+    int x, y;
     char welcome[] = "press space...";
     getmaxyx(stdscr, x, y);
     mvprintw(x / 2, (y / 2) - (sizeof(welcome) / 2), welcome);
     noecho();
     do {
+        curs_set(0);
         //get a char for menu movement
-        selection = getch();
+        selection = wgetch(win);
         clear();
-        if(selection == 'a' && highlighted != minmenu){
+        if (selection == 'a' && highlighted != minmenu) {
             highlighted--;
-        }else if(selection == 'z' && highlighted != maxmenu){
+        } else if (selection == 'z' && highlighted != maxmenu) {
             highlighted++;
         }
-        if(selection == 10){
+        if (selection == 10) {
             switch (highlighted) {
                 case 1:
-                    printw("the game will be here :)");
+                    gameplay(win);
                     break;
                 case 2:
-                    printw("manual will appear here");
+                    while (1) {
+                        erase();
+                        //arrow movement, collecting, scoring, show characters
+                        printhelp(x, y);
+                        if (getch()) {
+                            erase();
+                            break;
+                        }
+                    }
                     break;
                 case 3:
-                    printw("naura");
-                    endwin();
-                    //return 0
+                    exit = true;
             }
         }
-        //color pairs: 1 is currently highlighted, 2 is other selections
         switch (highlighted) {
             case 1:
                 start_color(); //2
                 init_pair(1, COLOR_WHITE, COLOR_BLUE); //3
-                attron(COLOR_PAIR( 1 ) ); //4
+                attron(COLOR_PAIR(1)); //4
                 attron(A_BOLD);
                 mvprintw((x / 2) - 3, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt1);
-                attroff( COLOR_PAIR( 1 ) );
+                attroff(COLOR_PAIR(1));
                 attroff(A_BOLD);
                 mvprintw((x / 2) - 2, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt2);
                 mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
@@ -57,10 +77,10 @@ void printmenu(){
                 start_color();
                 mvprintw((x / 2) - 3, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt1);
                 init_pair(1, COLOR_WHITE, COLOR_BLUE); //3
-                attron(COLOR_PAIR( 1 ) ); //4
+                attron(COLOR_PAIR(1)); //4
                 attron(A_BOLD);
                 mvprintw((x / 2) - 2, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt2);
-                attroff(COLOR_PAIR( 1 ) );
+                attroff(COLOR_PAIR(1));
                 attroff(A_BOLD);
                 mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
                 break;
@@ -69,16 +89,18 @@ void printmenu(){
                 mvprintw((x / 2) - 3, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt1);
                 mvprintw((x / 2) - 2, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt2);
                 init_pair(1, COLOR_WHITE, COLOR_BLUE); //3
-                attron( COLOR_PAIR( 1 ) ); //4
+                attron(COLOR_PAIR(1)); //4
                 attron(A_BOLD);
                 mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
-                attroff(COLOR_PAIR( 1 ) );
+                attroff(COLOR_PAIR(1));
                 attroff(A_BOLD);
                 break;
         }
-    } while(highlighted != 4 && selection != 10);
-//    clear();
-//    printw("gameon");
-    getch();
+        init_pair(56, COLOR_YELLOW, COLOR_BLACK);
+        attron(COLOR_PAIR(56));
+        mvprintw(5, (y / 2) - 12, title);
+        attroff(COLOR_PAIR(56));
+    } while ((exit != true));
+    wgetch(win);
     endwin();
 }

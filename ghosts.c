@@ -19,17 +19,17 @@ vec *move_ghost(vec *ghostcords, vec *gdir, bool *hit) {
             gdir->y = 0;
             gdir->x = (rand() % 2 == 0) ? 1 : -1;  // Choose a random horizontal direction
         }
-    }else if (character == 'C'){
+    } else if (character == 'C') {
         hit = (bool *) true;
-    }else {
+    } else {
         // Update the ghost's position if there's no wall
         ghostcords->x = next_x;
         ghostcords->y = next_y;
     }
-    if(ghostcords->y == 4){
+    if (ghostcords->y == 4) {
         gdir->y++;
         gdir->x = (rand() % 2 == 0) ? 1 : -1;
-    }else if(ghostcords->y == 26){
+    } else if (ghostcords->y == 26) {
         gdir->y--;
         gdir->x = (rand() % 2 == 0) ? 1 : -1;
     }
