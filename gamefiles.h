@@ -29,3 +29,5 @@ typedef struct berrytrack {
 void spawn_berries(berrytrack berry_tracker[35][104]);
 
 vec *move_ghost(vec *ghostcords, vec *gdir, bool *hit);
+
+void save_score(int score, WINDOW *win);

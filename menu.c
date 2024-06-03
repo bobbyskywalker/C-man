@@ -18,11 +18,12 @@ void printhelp(int x, int y) {
 void printmenu() {
     const char opt1[] = "Play";
     const char opt2[] = "Help";
-    const char opt3[] = "Exit";
+    const char opt3[] = "High Scores";
+    const char opt4[] = "Exit";
     const char title[] = "-------- C-MAN ---------";
     bool exit = false, help = false;
     int selection;
-    int highlighted = 1, minmenu = 1, maxmenu = 3;
+    int highlighted = 1, minmenu = 1, maxmenu = 4;
     //start
     WINDOW *win = initscr();
     nodelay(stdscr, FALSE);
@@ -58,7 +59,11 @@ void printmenu() {
                     }
                     break;
                 case 3:
+                    //preview highscores
+                    break;
+                case 4:
                     exit = true;
+                    break;
             }
         }
         switch (highlighted) {
@@ -72,6 +77,7 @@ void printmenu() {
                 attroff(A_BOLD);
                 mvprintw((x / 2) - 2, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt2);
                 mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
+                mvprintw((x / 2), (y / 2) - (sizeof(opt1) / 2), "%s\n", opt4);
                 break;
             case 2:
                 start_color();
@@ -83,6 +89,7 @@ void printmenu() {
                 attroff(COLOR_PAIR(1));
                 attroff(A_BOLD);
                 mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
+                mvprintw((x / 2), (y / 2) - (sizeof(opt1) / 2), "%s\n", opt4);
                 break;
             case 3:
                 start_color();
@@ -94,7 +101,18 @@ void printmenu() {
                 mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
                 attroff(COLOR_PAIR(1));
                 attroff(A_BOLD);
+                mvprintw((x / 2), (y / 2) - (sizeof(opt1) / 2), "%s\n", opt4);
                 break;
+            case 4:
+                mvprintw((x / 2) - 3, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt1);
+                mvprintw((x / 2) - 2, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt2);
+                mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
+                init_pair(1, COLOR_WHITE, COLOR_BLUE);
+                attron(COLOR_PAIR(1));
+                attron(A_BOLD);
+                mvprintw((x / 2), (y / 2) - (sizeof(opt1) / 2), "%s\n", opt4);
+                attroff(COLOR_PAIR(1));
+                attroff(A_BOLD);
         }
         init_pair(56, COLOR_YELLOW, COLOR_BLACK);
         attron(COLOR_PAIR(56));

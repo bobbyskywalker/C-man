@@ -234,8 +234,15 @@ int gameplay(WINDOW *win) {
     mvprintw(HEIGHT / 2 - 2, WIDTH / 2 - 2, "%d", score);
     attroff(COLOR_PAIR(1));
     mvprintw(1, 1, "press esc to exit");
+    attron(COLOR_PAIR(5));
+    mvprintw(HEIGHT / 2 + 8, WIDTH / 2 - 9, "Save your score? y/n");
+    attroff(COLOR_PAIR(5));
     int exit_button;
     while (exit_button != 27) {
+        if(exit_button == 'y'){
+            save_score(score, win);
+            //savescore loop
+        }
         exit_button = wgetch(win);
     }
     erase();
