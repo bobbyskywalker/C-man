@@ -21,6 +21,8 @@ typedef struct vector {
     int y;
 } vec;
 
+
+//berry
 typedef struct berrytrack {
     int x, y;
     bool iseaten;
@@ -28,6 +30,19 @@ typedef struct berrytrack {
 
 void spawn_berries(berrytrack berry_tracker[35][104]);
 
+//ghost
 vec *move_ghost(vec *ghostcords, vec *gdir, bool *hit);
 
+
+//scores
+typedef struct scoreblock{
+    int score;
+    char initials[3];
+}scoreblock;
+
+
+
 void save_score(int score, WINDOW *win);
+void read_score(char *path, WINDOW *win);
+void sort_score(FILE *score_fileptr);
+

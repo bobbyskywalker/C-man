@@ -59,7 +59,11 @@ void printmenu() {
                     }
                     break;
                 case 3:
-                    //preview highscores
+                    erase();
+                    read_score("C:\\Users\\olek\\CLionProjects\\pacmangame\\cmake-build-debug\\scores.txt", win);
+                    if(getch()){
+                        erase();
+                    }
                     break;
                 case 4:
                     exit = true;
