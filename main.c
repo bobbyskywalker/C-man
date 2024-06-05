@@ -4,9 +4,8 @@
 #include "gamefiles.h"
 
 
-
 //TODO: fix life losing when eating ghosts, scoreboard: three letter typein, filesave, file read and present
-int main(){
+int main() {
     printmenu();
     return 0;
 }

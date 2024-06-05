@@ -1,5 +1,7 @@
+#include <stdlib.h>
 #include "curses.h"
 #include "gamefiles.h"
+
 
 void printhelp(int x, int y) {
     char arrows[] = {"Use ARROWKEYS to move"};
@@ -21,7 +23,9 @@ void printmenu() {
     const char opt3[] = "High Scores";
     const char opt4[] = "Exit";
     const char title[] = "-------- C-MAN ---------";
-    bool exit = false, help = false;
+    scoreblock *sorted;
+    FILE *fileptr;
+    bool exit = false, first_enter = true;
     int selection;
     int highlighted = 1, minmenu = 1, maxmenu = 4;
     //start
@@ -45,12 +49,12 @@ void printmenu() {
         if (selection == 10) {
             switch (highlighted) {
                 case 1:
+                    first_enter = true;
                     gameplay(win);
                     break;
                 case 2:
                     while (1) {
                         erase();
-                        //arrow movement, collecting, scoring, show characters
                         printhelp(x, y);
                         if (getch()) {
                             erase();
@@ -60,8 +64,14 @@ void printmenu() {
                     break;
                 case 3:
                     erase();
-                    read_score("C:\\Users\\olek\\CLionProjects\\pacmangame\\cmake-build-debug\\scores.txt", win);
-                    if(getch()){
+                    fileptr = read_score("C:\\Users\\olek\\CLionProjects\\pacmangame\\cmake-build-debug\\scores.txt",
+                                         win);
+                    if (first_enter == true) {
+                        sorted = sort_score(fileptr);
+                        first_enter = false;
+                    }
+                    print_score(sorted);
+                    if (getch()) {
                         erase();
                     }
                     break;
@@ -80,7 +90,7 @@ void printmenu() {
                 attroff(COLOR_PAIR(1));
                 attroff(A_BOLD);
                 mvprintw((x / 2) - 2, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt2);
-                mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
+                mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt3) / 2) + 1, "%s\n", opt3);
                 mvprintw((x / 2), (y / 2) - (sizeof(opt1) / 2), "%s\n", opt4);
                 break;
             case 2:
@@ -92,7 +102,7 @@ void printmenu() {
                 mvprintw((x / 2) - 2, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt2);
                 attroff(COLOR_PAIR(1));
                 attroff(A_BOLD);
-                mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
+                mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt3) / 2) + 1, "%s\n", opt3);
                 mvprintw((x / 2), (y / 2) - (sizeof(opt1) / 2), "%s\n", opt4);
                 break;
             case 3:
@@ -102,7 +112,7 @@ void printmenu() {
                 init_pair(1, COLOR_WHITE, COLOR_BLUE); //3
                 attron(COLOR_PAIR(1)); //4
                 attron(A_BOLD);
-                mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
+                mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt3) / 2) + 1, "%s\n", opt3);
                 attroff(COLOR_PAIR(1));
                 attroff(A_BOLD);
                 mvprintw((x / 2), (y / 2) - (sizeof(opt1) / 2), "%s\n", opt4);
@@ -110,7 +120,7 @@ void printmenu() {
             case 4:
                 mvprintw((x / 2) - 3, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt1);
                 mvprintw((x / 2) - 2, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt2);
-                mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt1) / 2), "%s\n", opt3);
+                mvprintw((x / 2) - 1, (y / 2) - (sizeof(opt3) / 2) + 1, "%s\n", opt3);
                 init_pair(1, COLOR_WHITE, COLOR_BLUE);
                 attron(COLOR_PAIR(1));
                 attron(A_BOLD);

@@ -35,14 +35,16 @@ vec *move_ghost(vec *ghostcords, vec *gdir, bool *hit);
 
 
 //scores
-typedef struct scoreblock{
+typedef struct scoreblock {
     int score;
     char initials[3];
-}scoreblock;
-
+} scoreblock;
 
 
 void save_score(int score, WINDOW *win);
-void read_score(char *path, WINDOW *win);
-void sort_score(FILE *score_fileptr);
 
+void print_score();
+
+FILE *read_score(char *path, WINDOW *win);
+
+scoreblock *sort_score(FILE *score_fileptr);

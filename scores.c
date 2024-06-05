@@ -1,6 +1,6 @@
-#include <unistd.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <unistd.h>
 #include "curses.h"
 #include "gamefiles.h"
 #include <string.h>
@@ -8,11 +8,9 @@
 #define HEIGHT 30
 #define WIDTH 120
 
+//TODO: printing highscores with empty file
 
-
-//TODO: Read and sort functions refactor, separate function for printing, a bug terminates the program when viewing high scores twice
-// and cant save score after viewing highscore
-
+//extractions
 char **extract_initials(char *scoring) {
     char *buff = calloc(3 + 1, sizeof(char));
     char **initials = calloc(strlen(scoring), 4 * sizeof(char));
@@ -65,7 +63,7 @@ int *extract_scores(char *scoring) {
             size = scores_index;
             continue;
         }
-        if(is_score) {
+        if (is_score) {
             buff[buff_index++] = scoring[i];
             elementlen++;
         }
@@ -75,20 +73,22 @@ int *extract_scores(char *scoring) {
     return scores;
 }
 
-int comparator(const void *x, const void *y) {
-    int s1 = ((struct scoreblock *)x)->score;
-    int s2 = ((struct scoreblock *)y)->score;
-    return s2 - s1;
-}
-
+//save the score to a file
 void save_score(int score, WINDOW *win) {
     char initials[4];
+
+    char path[PATH_MAX];
+    getcwd(path, sizeof(path));
+    char filename[] = "\\scores.txt";
+    strcat(path, filename);
+    path[strlen(path)] = '\0';
+
     char *scorestr = calloc(7 + 3, sizeof(char));
     sprintf(scorestr, "%d", score);
     FILE *score_fileptr;
-    score_fileptr = fopen("C:\\Users\\olek\\CLionProjects\\pacmangame\\cmake-build-debug\\scores.txt", "r");
+    score_fileptr = fopen(path, "r");
     if (score_fileptr == 0) {
-        score_fileptr = fopen("C:\\Users\\olek\\CLionProjects\\pacmangame\\cmake-build-debug\\scores.txt", "w");
+        score_fileptr = fopen(path, "w");
         for (int i = 0; i < 3; i++) {
             erase();
             mvprintw(HEIGHT / 2 - 1, WIDTH / 2 - 9, "ENTER 3 INITIALS:");
@@ -102,7 +102,7 @@ void save_score(int score, WINDOW *win) {
         scorestr[strlen(scorestr)] = '\0';
         fprintf(score_fileptr, "%s", scorestr);
     } else {
-        score_fileptr = fopen("C:\\Users\\olek\\CLionProjects\\pacmangame\\cmake-build-debug\\scores.txt", "a");
+        score_fileptr = fopen(path, "a");
         for (int i = 0; i < 3; i++) {
             erase();
             mvprintw(HEIGHT / 2 - 1, WIDTH / 2 - 9, "ENTER 3 INITIALS:");
@@ -120,7 +120,22 @@ void save_score(int score, WINDOW *win) {
     wgetch(win);
 }
 
-void sort_score(FILE *score_fileptr) {
+//read the score
+FILE *read_score(char *path, WINDOW *win) {
+    FILE *score_fileptr;
+    score_fileptr = fopen(path, "r");
+    return score_fileptr;
+}
+
+
+//sorting by highscores
+int comparator(const void *x, const void *y) {
+    int s1 = ((struct scoreblock *) x)->score;
+    int s2 = ((struct scoreblock *) y)->score;
+    return s2 - s1;
+}
+
+scoreblock *sort_score(FILE *score_fileptr) {
     char *scoring = calloc(10000, sizeof(char)); // Assuming 1000 chars is enough to hold file content
     char **initials;
     int *scores;
@@ -133,37 +148,41 @@ void sort_score(FILE *score_fileptr) {
     initials = extract_initials(scoring);
     scores = extract_scores(scoring);
     //copy contents into struct array
-    for(int i = 0; initials[i] != NULL; i++){
+    for (int i = 0; initials[i] != NULL; i++) {
         strcpy(score_elements[i].initials, initials[i]);
         size = i;
     }
-    for(int i = 0; scores[i] != '\0'; i++){
+    for (int i = 0; scores[i] != '\0'; i++) {
         score_elements[i].score = scores[i];
     }
     //sort the array
     qsort(score_elements, size + 1, sizeof(scoreblock), comparator);
+    //global variable
+    return score_elements;
+}
 
-//TODO:separate func
+//print score in menu
+void print_score(scoreblock *sorted) {
     //print top 10 scores
     init_pair(47, COLOR_YELLOW, COLOR_BLACK);
     attron(COLOR_PAIR(47));
     int place = 1;
-    mvprintw(8, 50,  "HIGH SCORES:");
-    for(int i = 0, r = 10, c = 50; i < 10; i++, r++){
-        if(i != 9) {
+    mvprintw(8, 50, "HIGH SCORES:");
+    for (int i = 0, r = 10, c = 50; i < 10; i++, r++) {
+        if (i != 9) {
             mvprintw(r, c - 3, "%d", place++);
-        }else{
+        } else {
             mvprintw(r, c - 4, "%d", place++);
         }
-        mvprintw(r, c - 2, ".");
-        mvprintw(r, c, "%s", score_elements[i].initials);
-        mvprintw(r, c + 4, " %d", score_elements[i].score);
+        if(sorted[i].score != EOF) {
+            mvprintw(r, c - 2, ".");
+            mvprintw(r, c, "%s", sorted[i].initials);
+            mvprintw(r, c + 4, " %d", sorted[i].score);
+        }
     }
     attroff(COLOR_PAIR(47));
 }
 
-void read_score(char *path, WINDOW *win){
-    FILE *score_fileptr;
-    score_fileptr = fopen(path, "r");
-    sort_score(score_fileptr);
-}
+
+
+
