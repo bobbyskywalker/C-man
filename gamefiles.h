@@ -43,8 +43,8 @@ typedef struct scoreblock {
 
 void save_score(int score, WINDOW *win);
 
-void print_score();
+void print_score(scoreblock *sorted);
 
-FILE *read_score(char *path, WINDOW *win);
+FILE *read_score(WINDOW *win);
 
 scoreblock *sort_score(FILE *score_fileptr);

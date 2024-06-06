@@ -121,7 +121,12 @@ void save_score(int score, WINDOW *win) {
 }
 
 //read the score
-FILE *read_score(char *path, WINDOW *win) {
+FILE *read_score(WINDOW *win) {
+    char path[PATH_MAX];
+    getcwd(path, sizeof(path));
+    char filename[] = "\\scores.txt";
+    strcat(path, filename);
+    path[strlen(path)] = '\0';
     FILE *score_fileptr;
     score_fileptr = fopen(path, "r");
     return score_fileptr;
@@ -174,11 +179,9 @@ void print_score(scoreblock *sorted) {
         } else {
             mvprintw(r, c - 4, "%d", place++);
         }
-        if(sorted[i].score != EOF) {
-            mvprintw(r, c - 2, ".");
-            mvprintw(r, c, "%s", sorted[i].initials);
-            mvprintw(r, c + 4, " %d", sorted[i].score);
-        }
+        mvprintw(r, c - 2, ".");
+        mvprintw(r, c, "%s", sorted[i].initials);
+        mvprintw(r, c + 4, " %d", sorted[i].score);
     }
     attroff(COLOR_PAIR(47));
 }

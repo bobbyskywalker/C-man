@@ -83,6 +83,7 @@ int gameplay(WINDOW *win) {
             pacman.x == ghost2->x && pacman.y == ghost2->y ? (ghost_status[1] = false), score += 100 : 1;
             pacman.x == ghost3->x && pacman.y == ghost3->y ? (ghost_status[2] = false), score += 100 : 1;
             pacman.x == ghost4->x && pacman.y == ghost4->y ? (ghost_status[3] = false), score += 100 : 1;
+            hit = false;
         }
 
         //key reaction
@@ -239,7 +240,7 @@ int gameplay(WINDOW *win) {
     attroff(COLOR_PAIR(5));
     int exit_button;
     while (exit_button != 27 && exit_button != 'n') {
-        if(exit_button == 'y'){
+        if (exit_button == 'y') {
             erase();
             save_score(score, win);
             break;

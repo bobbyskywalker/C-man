@@ -31,6 +31,7 @@ void printmenu() {
     //start
     WINDOW *win = initscr();
     nodelay(stdscr, FALSE);
+    keypad(win, true);
     int x, y;
     char welcome[] = "press space...";
     getmaxyx(stdscr, x, y);
@@ -41,9 +42,9 @@ void printmenu() {
         //get a char for menu movement
         selection = wgetch(win);
         clear();
-        if (selection == 'a' && highlighted != minmenu) {
+        if (selection == KEY_UP && highlighted != minmenu) {
             highlighted--;
-        } else if (selection == 'z' && highlighted != maxmenu) {
+        } else if (selection == KEY_DOWN && highlighted != maxmenu) {
             highlighted++;
         }
         if (selection == 10) {
@@ -64,12 +65,12 @@ void printmenu() {
                     break;
                 case 3:
                     erase();
-                    fileptr = read_score("C:\\Users\\olek\\CLionProjects\\pacmangame\\cmake-build-debug\\scores.txt",
-                                         win);
+                    fileptr = read_score(win);
                     if (first_enter == true) {
                         sorted = sort_score(fileptr);
                         first_enter = false;
                     }
+                    fclose(fileptr);
                     print_score(sorted);
                     if (getch()) {
                         erase();
