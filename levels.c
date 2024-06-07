@@ -1,10 +1,6 @@
 #include "curses.h"
 #include "gamefiles.h"
 
-#define VERTICAL 30
-#define HORIZONTAL 100
-
-
 void level1() {
     char vert = '|';
     char horiz = '_';

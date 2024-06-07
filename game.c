@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include "curses.h"
 #include "gamefiles.h"
 
@@ -18,7 +17,10 @@ int gameplay(WINDOW *win) {
     erase();
     int score = 0;
     int lives = 3;
+    int time = 90;
+    int time_iterations = 0;
     char lifestr[] = "<3:";
+    char timestr[] = "TIME:";
     getmaxyx(stdscr, screenheight, screenwidth);
     keypad(stdscr, TRUE);
     nodelay(stdscr, TRUE);
@@ -55,8 +57,10 @@ int gameplay(WINDOW *win) {
     //true = alive
     bool ghost_status[4] = {true, true, true, true};
 
-    //berry array
+    //berry array and copy for reset
     berrytrack berrytracker[35][104];
+    berrytrack berrytracker_copy[35][104];
+    memcpy(berrytracker_copy, berrytracker, sizeof(berrytracker));
 
     //orb variables
     vec orb = {30, 15};
@@ -147,7 +151,7 @@ int gameplay(WINDOW *win) {
         ghost4 = move_ghost(ghost4, gdir4, hit);
 
         //death
-        if (lives == 0) {
+        if (lives == 0 || time == 0) {
             break;
         }
 
@@ -218,12 +222,21 @@ int gameplay(WINDOW *win) {
         mvprintw(2, 95, "%d", score);
         init_pair(6, COLOR_RED, COLOR_BLACK);
         attron(COLOR_PAIR(6));
-        mvprintw(2, WIDTH / 2 - sizeof(lifestr) + 5, lifestr);
-        mvprintw(2, WIDTH / 2 - sizeof(lifestr) + 8, "%d", lives);
+        mvprintw(2, WIDTH / 2 - sizeof(lifestr) + 10, lifestr);
+        mvprintw(2, WIDTH / 2 - sizeof(lifestr) + 13, "%d", lives);
+        mvprintw(2, WIDTH / 2 - sizeof(timestr) - 5, timestr);
+        mvprintw(2, WIDTH / 2 - sizeof(timestr) + 3, "%d", time);
+        //time passing
+        if (time_iterations == 14) {
+            time--;
+            time_iterations = 0;
+        }
+        time_iterations++;
         attroff(COLOR_PAIR(6));
         usleep(65000);
     }
-
+    //board reset after game
+    memcpy(berrytracker, berrytracker_copy, sizeof(berrytracker));
     //game over screen
     erase();
     nodelay(stdscr, FALSE);

@@ -1,6 +1,4 @@
-#include <unistd.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <stdbool.h>
 #include "curses.h"
 #include "gamefiles.h"

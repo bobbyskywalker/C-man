@@ -12,7 +12,7 @@
 
 //extractions
 char **extract_initials(char *scoring) {
-    char *buff = calloc(3 + 1, sizeof(char));
+    char *buff = calloc(4 + 1, sizeof(char));
     char **initials = calloc(strlen(scoring), 4 * sizeof(char));
     int len = (int) strlen(scoring);
     bool isinit = false;

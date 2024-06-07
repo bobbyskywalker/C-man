@@ -1,13 +1,5 @@
-#include <stdlib.h>
-#include <stdint.h>
 #include "curses.h"
 #include "gamefiles.h"
-
-#define VERTICAL 30
-#define HORIZONTAL 100
-//borders 30 / 100
-
-
 
 //spawning berries, generic, adjustable loop
 void spawn_berries(berrytrack berry_tracker[35][104]) {

@@ -1,11 +1,9 @@
-#include <stdio.h>
-#include <unistd.h>
-#include "curses.h"
 #include "gamefiles.h"
 
-//TODO: time for difficulty
-
-int main() {
+int main(int argc, char **argv) {
+    if(argc > 1){
+        printf("valid execution: name of the program");
+    }
     printmenu();
     return 0;
 }
