@@ -26,7 +26,7 @@ int gameplay(WINDOW *win) {
     nodelay(stdscr, TRUE);
 
     //pac-man variables
-    vec pacman = {WIDTH / 2, HEIGHT / 2 + 3};
+    vec pacman = {WIDTH / 2, HEIGHT / 2};
     vec dir = {1, 0};
 
     //berry array and copy for reset
@@ -80,10 +80,10 @@ int gameplay(WINDOW *win) {
         chtype bdcheck = get_char_at(stdscr, pacman.y, pacman.x);
         char character = bdcheck & A_CHARTEXT;
 
-        if (character == '_' || character == '|') {
+        if (character == '-' || character == '|') {
             pacman.x = last_empty_pac.x;
         }
-        if (character == '_' || character == '|') {
+        if (character == '-' || character == '|') {
             pacman.y = last_empty_pac.y;
         } else if (pacman.y == 3) {
             pacman.y++;
