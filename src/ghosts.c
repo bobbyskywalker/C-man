@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "curses.h"
-#include "gamefiles.h"
+#include "../headers/pacman.h"
 
 vec *move_ghost(vec *ghostcords, vec *gdir, bool *hit) {
     int next_x = ghostcords->x + gdir->x;

@@ -1,8 +1,8 @@
 #include "curses.h"
-#include "gamefiles.h"
+#include "../headers/pacman.h"
 
 
-void printhelp(int x, int y) {
+void print_help(int x, int y) {
     char arrows[] = {"Use ARROWKEYS to move"};
     char orbs[] = {"Collect orbs to gain points!"};
     char ghosts[] = {"Avoid ghosts! If you lose 3 lives, game over :(("};
@@ -16,7 +16,7 @@ void printhelp(int x, int y) {
     attroff(COLOR_PAIR(69));
 }
 
-void printmenu() {
+void print_menu() {
     const char opt1[] = "Play";
     const char opt2[] = "Help";
     const char opt3[] = "High Scores";
@@ -29,6 +29,9 @@ void printmenu() {
     int highlighted = 1, minmenu = 1, maxmenu = 4;
     //start
     WINDOW *win = initscr();
+    if (win == NULL) {
+        return;
+    }
     nodelay(stdscr, FALSE);
     keypad(win, true);
     int x, y;
@@ -55,7 +58,7 @@ void printmenu() {
                 case 2:
                     while (1) {
                         erase();
-                        printhelp(x, y);
+                        print_help(x, y);
                         if (getch()) {
                             erase();
                             break;
@@ -63,17 +66,6 @@ void printmenu() {
                     }
                     break;
                 case 3:
-                    erase();
-                    fileptr = read_score(win);
-                    if (first_enter == true) {
-                        sorted = sort_score(fileptr);
-                        first_enter = false;
-                    }
-                    fclose(fileptr);
-                    print_score(sorted);
-                    if (getch()) {
-                        erase();
-                    }
                     break;
                 case 4:
                     exit = true;

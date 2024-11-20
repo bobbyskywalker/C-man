@@ -1,17 +1,17 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "curses.h"
-#include "gamefiles.h"
+#include "../headers/pacman.h"
 
 #define HEIGHT 30
 #define WIDTH 120
 
-chtype get_char_at(WINDOW *win, int y, int x) {
-    wmove(win, y, x);
-    return winch(win);
-}
-
 int gameplay(WINDOW *win) {
+    if (stdscr == NULL) {
+        // Handle error here
+        printf("Error: stdscr is NULL\n");
+        return -1;
+    }
     //initialize screen
     int screenwidth, screenheight;
     erase();
@@ -29,34 +29,6 @@ int gameplay(WINDOW *win) {
     vec pacman = {WIDTH / 2, HEIGHT / 2 + 3};
     vec dir = {1, 0};
 
-    //ghost variables
-    vec *ghost1 = malloc(2 * sizeof(int));
-    vec *ghost2 = malloc(2 * sizeof(int));
-    vec *ghost3 = malloc(2 * sizeof(int));
-    vec *ghost4 = malloc(2 * sizeof(int));
-    ghost1->x = 25;
-    ghost1->y = 6;
-    ghost2->x = 90;
-    ghost2->y = 8;
-    ghost3->x = 25;
-    ghost3->y = 25;
-    ghost4->x = 90;
-    ghost4->y = 25;
-    vec *gdir1 = malloc(2 * sizeof(int));
-    gdir1->x = 1;
-    gdir1->y = 0;
-    vec *gdir2 = malloc(2 * sizeof(int));
-    gdir2->x = 1;
-    gdir2->y = 0;
-    vec *gdir3 = malloc(2 * sizeof(int));
-    gdir3->x = 0;
-    gdir3->y = 1;
-    vec *gdir4 = malloc(2 * sizeof(int));
-    gdir4->x = 0;
-    gdir4->y = 1;
-    //true = alive
-    bool ghost_status[4] = {true, true, true, true};
-
     //berry array and copy for reset
     berrytrack berrytracker[35][104];
     berrytrack berrytracker_copy[35][104];
@@ -68,7 +40,6 @@ int gameplay(WINDOW *win) {
     bool orb_effect = false;
 
     int exit = 0;
-    bool *hit = false;
     //game loop
     while (exit != 27) {
         curs_set(0);
@@ -77,19 +48,6 @@ int gameplay(WINDOW *win) {
         vec last_empty_pac = {pacman.x, pacman.y};
         //ghost collision, -1 life or eat a ghost
         chtype killcheck = get_char_at(stdscr, pacman.y, pacman.x);
-        char killchar = killcheck & A_CHARTEXT;
-        if (killchar == '#') hit = (bool *) true;
-        if (hit == true && orb_effect == false) {
-            lives--;
-            hit = false;
-        } else if (hit == true && orb_effect == true) {
-            pacman.x == ghost1->x && pacman.y == ghost1->y ? (ghost_status[0] = false), score += 100 : 1;
-            pacman.x == ghost2->x && pacman.y == ghost2->y ? (ghost_status[1] = false), score += 100 : 1;
-            pacman.x == ghost3->x && pacman.y == ghost3->y ? (ghost_status[2] = false), score += 100 : 1;
-            pacman.x == ghost4->x && pacman.y == ghost4->y ? (ghost_status[3] = false), score += 100 : 1;
-            hit = false;
-        }
-
         //key reaction
         switch (pressed) {
             case KEY_LEFT:
@@ -144,12 +102,6 @@ int gameplay(WINDOW *win) {
             orb_effect = true;
         }
 
-        //ghost movement
-        ghost1 = move_ghost(ghost1, gdir1, hit);
-        ghost2 = move_ghost(ghost2, gdir2, hit);
-        ghost3 = move_ghost(ghost3, gdir3, hit);
-        ghost4 = move_ghost(ghost4, gdir4, hit);
-
         //death
         if (lives == 0 || time == 0) {
             break;
@@ -193,28 +145,6 @@ int gameplay(WINDOW *win) {
         mvaddch(pacman.y, pacman.x, 'C');
         attroff(COLOR_PAIR(1));
 
-        //add ghosts (change color if orb is active)
-        if (orb_effect == false) {
-            init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
-            attron(COLOR_PAIR(5));
-        } else {
-            init_pair(99, COLOR_MAGENTA, COLOR_WHITE);
-        }
-        if (ghost_status[0] != false) {
-            mvaddch(ghost1->y, ghost1->x, '#');
-        }
-        if (ghost_status[1] != false) {
-            mvaddstr(ghost2->y, ghost2->x, "#");
-        }
-        if (ghost_status[2] != false) {
-            mvaddch(ghost3->y, ghost3->x, '#');
-        }
-        if (ghost_status[3] != false) {
-            mvaddch(ghost4->y, ghost4->x, '#');
-        }
-        attroff(COLOR_PAIR(5));
-        attron(COLOR_PAIR(99));
-
         //upper screen signs
         init_pair(4, COLOR_YELLOW, COLOR_BLACK);
         attron(COLOR_PAIR(4));
@@ -249,17 +179,7 @@ int gameplay(WINDOW *win) {
     attroff(COLOR_PAIR(1));
     mvprintw(1, 1, "press esc to exit");
     attron(COLOR_PAIR(5));
-    mvprintw(HEIGHT / 2 + 8, WIDTH / 2 - 9, "Save your score? y/n");
-    attroff(COLOR_PAIR(5));
     int exit_button;
-    while (exit_button != 27 && exit_button != 'n') {
-        if (exit_button == 'y') {
-            erase();
-            save_score(score, win);
-            break;
-        }
-        exit_button = wgetch(win);
-    }
     erase();
     return 0;
 }

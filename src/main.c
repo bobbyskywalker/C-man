@@ -1,10 +1,10 @@
-#include "gamefiles.h"
+#include "../headers/pacman.h"
 
 int main(int argc, char **argv) {
     if(argc > 1){
         printf("valid execution: name of the program");
     }
-    printmenu();
+    print_menu();
     return 0;
 }
 
