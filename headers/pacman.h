@@ -61,6 +61,6 @@ typedef struct scoreblock {
 
 // SECTION: MECHANICS
 void spawn_berries(berrytrack berry_tracker[35][104]);
-vec *move_ghost(vec *ghostcords, vec *gdir, bool *hit);
+vec *move_ghost(vec *ghostcords, vec *gdir);
 
 # endif

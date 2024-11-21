@@ -39,6 +39,12 @@ int gameplay(WINDOW *win) {
     int orb_time = 150;
     bool orb_effect = false;
 
+    //ghost TODO: instances to be kept in a linked list
+    vec *ghost = (vec *) malloc(sizeof(vec));
+    ghost->x = WIDTH / 4;
+    ghost->y = HEIGHT / 4;
+    vec g_dir = {1, 0};
+
     int exit = 0;
     //game loop
     while (exit != 27) {
@@ -145,6 +151,13 @@ int gameplay(WINDOW *win) {
         mvaddch(pacman.y, pacman.x, 'C');
         attroff(COLOR_PAIR(1));
 
+
+        //add ghosts
+        init_pair(99, COLOR_MAGENTA, COLOR_BLACK);
+        attron(COLOR_PAIR(99));
+        mvaddch(ghost->y, ghost->x, '#');
+        ghost = move_ghost(ghost, &g_dir);
+
         //upper screen signs
         init_pair(4, COLOR_YELLOW, COLOR_BLACK);
         attron(COLOR_PAIR(4));
@@ -181,5 +194,6 @@ int gameplay(WINDOW *win) {
     attron(COLOR_PAIR(5));
     int exit_button;
     erase();
+    free(ghost);
     return 0;
 }
