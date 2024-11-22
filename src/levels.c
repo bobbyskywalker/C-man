@@ -22,17 +22,19 @@ void level1() {
     }
     // short borders
     for (int i = SCREEN_WIDTH / 2 - 10; i <= SCREEN_WIDTH / 2 + 10; i++) {
-        if ((i - (SCREEN_WIDTH / 2 - 10)) % 4 == 0) {  // Check if the index is a multiple of 4
-            for (int j = VERTICAL_TOP_OFFSET; j < VERTICAL_TOP_OFFSET + 5; j++) {
-                mvaddch(j, i, vert);
+        if ((i - (SCREEN_WIDTH / 2 - 10)) % 4 == 0) {
+            for (int j = VERTICAL_TOP_OFFSET; j < VERTICAL_TOP_OFFSET + 7; j++) {
+                if (j != VERTICAL_TOP_OFFSET + 5)
+                    mvaddch(j, i, vert);
             }
         }
     }
     // short borders 2
     for (int i = SCREEN_WIDTH / 2 - 10; i <= SCREEN_WIDTH / 2 + 10; i++) {
-        if ((i - (SCREEN_WIDTH / 2 - 10)) % 4 == 0) {  // Check if the index is a multiple of 4
-            for (int j = VERTICAL_BOTTOM_OFFSET + 4; j < VERTICAL_BOTTOM_OFFSET + 9; j++) {
-                mvaddch(j, i, vert);
+        if ((i - (SCREEN_WIDTH / 2 - 10)) % 4 == 0) {
+            for (int j = VERTICAL_BOTTOM_OFFSET + 2; j < VERTICAL_BOTTOM_OFFSET + 9; j++) {
+                if (j != VERTICAL_BOTTOM_OFFSET + 3)
+                    mvaddch(j, i, vert);
             }
         }
     }

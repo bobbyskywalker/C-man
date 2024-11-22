@@ -8,7 +8,6 @@
 
 int gameplay(WINDOW *win) {
     if (stdscr == NULL) {
-        // Handle error here
         printf("Error: stdscr is NULL\n");
         return -1;
     }
@@ -39,13 +38,29 @@ int gameplay(WINDOW *win) {
     int orb_time = 150;
     bool orb_effect = false;
 
-    //ghost TODO: instances to be kept in a linked list
-    vec *ghost = (vec *) malloc(sizeof(vec));
-    ghost->x = WIDTH / 4;
-    ghost->y = HEIGHT / 4;
-    vec g_dir = {1, 0};
+    ghosts *head = NULL;
+    int ghosts_start_pos[4][2] = {
+        {WIDTH / 4, 5},  // top-left ghost
+        {WIDTH * 3 / 4, 5},  // top-right ghost
+        {WIDTH / 4, 25},  // bottom-left ghost
+        {WIDTH * 3 / 4, 25}  // bottom-right ghost
+    };
+    for (int i = 0; i < 4; i++) 
+    {
+        vec *gh = malloc(sizeof(vec));
+        if (!gh) exit(EXIT_FAILURE);
+        gh->x = ghosts_start_pos[i][0];
+        gh->y = ghosts_start_pos[i][1];
+
+        vec *gdir = malloc(sizeof(vec));
+        if (!gdir) exit(EXIT_FAILURE);
+        gdir->x = 1;
+        gdir->y = 0; 
+        head = add_ghost(head, gh, gdir);
+    }
 
     int exit = 0;
+
     //game loop
     while (exit != 27) {
         curs_set(0);
@@ -155,8 +170,12 @@ int gameplay(WINDOW *win) {
         //add ghosts
         init_pair(99, COLOR_MAGENTA, COLOR_BLACK);
         attron(COLOR_PAIR(99));
-        mvaddch(ghost->y, ghost->x, '#');
-        ghost = move_ghost(ghost, &g_dir);
+        ghosts *current = head;
+        while (current != NULL) {
+            mvaddch(current->ghost->y, current->ghost->x, '#');
+            move_ghost(current);
+            current = current->next;
+        }
 
         //upper screen signs
         init_pair(4, COLOR_YELLOW, COLOR_BLACK);
@@ -194,6 +213,5 @@ int gameplay(WINDOW *win) {
     attron(COLOR_PAIR(5));
     int exit_button;
     erase();
-    free(ghost);
     return 0;
 }

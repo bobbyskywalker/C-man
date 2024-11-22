@@ -1,7 +1,7 @@
 #ifndef PACMAN_H
 # define PACMAN_H
 
-// SECTION : CONSTANTS  
+// SECTION: CONSTANTS  
 #define SCREEN_WIDTH 120
 #define SCREEN_HEIGHT 30
 #define BERRY_TRACKER_ROWS 35
@@ -25,24 +25,25 @@
 #define INNER_BORDER_OFFSET 7
 #define INNER_BORDER_LENGTH 6
 
-// SECTION : INCLUDES
+// SECTION: INCLUDES
+#include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
 #include "curses.h"
 
-// SECTION : MAIN
+// SECTION: MAIN
 void print_menu();
 int gameplay(WINDOW *win);
 
-// SECTION : GRAPHICS
+// SECTION: GRAPHICS
 void draw_borders();
 void level1();
 
 // SECTION: UTILS
 chtype get_char_at(WINDOW *win, int y, int x);
 
-// SECTION : STRUCTS
+// SECTION: STRUCTS
 // generic vector
 typedef struct vector {
     int x;
@@ -59,8 +60,16 @@ typedef struct scoreblock {
     char initials[3];
 } scoreblock;
 
+// SECTION: GHOSTS LIST
+typedef struct ghosts {
+    vec *ghost;
+    vec *gdir;
+    void *next;
+} ghosts;
+ghosts *add_ghost(ghosts *head, vec *ghost, vec *gdir);
+
 // SECTION: MECHANICS
 void spawn_berries(berrytrack berry_tracker[35][104]);
-vec *move_ghost(vec *ghostcords, vec *gdir);
+void move_ghost(ghosts *ghost);
 
 # endif
