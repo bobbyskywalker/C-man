@@ -1,6 +1,3 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include "curses.h"
 #include "../headers/pacman.h"
 
 #define HEIGHT 30
@@ -23,6 +20,10 @@ int gameplay(WINDOW *win) {
     getmaxyx(stdscr, screenheight, screenwidth);
     keypad(stdscr, TRUE);
     nodelay(stdscr, TRUE);
+
+    // game timer setup
+    float accumulated_time = 0;  // Accumulate elapsed time in seconds
+    const float seconds_per_update = 1.0f; // Decrement `time` every 1 second
 
     //pac-man variables
     vec pacman = {WIDTH / 2, HEIGHT / 2};
@@ -63,6 +64,7 @@ int gameplay(WINDOW *win) {
 
     //game loop
     while (exit != 27) {
+        clock_t start_time = clock();
         curs_set(0);
         noecho();
         int pressed = wgetch(win);
@@ -112,6 +114,15 @@ int gameplay(WINDOW *win) {
             pacman.y--;
         }
 
+        // ghost collision
+        if (character == '#' && !orb_effect)
+            lives--;
+        else if (character == '#' && orb_effect)
+        {
+            score += 100;
+            head = remove_ghost(head, pacman.x, pacman.y);
+        }
+            
         //berry consumption mechanism, score update
         if (character == '.') {
             berrytracker[pacman.y - 4][pacman.x - 22].iseaten = true;
@@ -123,6 +134,10 @@ int gameplay(WINDOW *win) {
             orb_effect = true;
         }
 
+        // Check for game over conditions
+        if (lives == 0 || time == 0) {
+            break;
+        }
         //death
         if (lives == 0 || time == 0) {
             break;
@@ -169,7 +184,11 @@ int gameplay(WINDOW *win) {
 
         //add ghosts
         init_pair(99, COLOR_MAGENTA, COLOR_BLACK);
-        attron(COLOR_PAIR(99));
+        init_pair(100, COLOR_WHITE, COLOR_BLACK);
+        if (orb_effect)
+            attron(COLOR_PAIR(100));
+        else
+            attron(COLOR_PAIR(99));       
         ghosts *current = head;
         while (current != NULL) {
             mvaddch(current->ghost->y, current->ghost->x, '#');
@@ -188,14 +207,24 @@ int gameplay(WINDOW *win) {
         mvprintw(2, WIDTH / 2 - sizeof(lifestr) + 13, "%d", lives);
         mvprintw(2, WIDTH / 2 - sizeof(timestr) - 5, timestr);
         mvprintw(2, WIDTH / 2 - sizeof(timestr) + 3, "%d", time);
-        //time passing
-        if (time_iterations == 14) {
+
+        // TODO: to fix 
+        // Timing control / FPS
+        clock_t end_time = clock();
+        float frame_time_sec = (float)(end_time - start_time) / CLOCKS_PER_SEC;
+        accumulated_time += frame_time_sec;
+
+        // Decrement time every second
+        if (accumulated_time >= seconds_per_update) {
             time--;
-            time_iterations = 0;
+            accumulated_time -= seconds_per_update; // Ensure no time is lost
         }
-        time_iterations++;
-        attroff(COLOR_PAIR(6));
-        usleep(65000);
+        // Control frame rate
+        long elapsed_time_us = (end_time - start_time) * 1000000 / CLOCKS_PER_SEC;
+
+        if (elapsed_time_us < FRAME_DURATION) {
+            usleep(FRAME_DURATION - elapsed_time_us);
+        }
     }
     //board reset after game
     memcpy(berrytracker, berrytracker_copy, sizeof(berrytracker));

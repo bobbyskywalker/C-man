@@ -2,6 +2,8 @@
 # define PACMAN_H
 
 // SECTION: CONSTANTS  
+#define FPS 15
+#define FRAME_DURATION (1000000 / FPS)
 #define SCREEN_WIDTH 120
 #define SCREEN_HEIGHT 30
 #define BERRY_TRACKER_ROWS 35
@@ -27,6 +29,8 @@
 
 // SECTION: INCLUDES
 #include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
@@ -67,6 +71,7 @@ typedef struct ghosts {
     void *next;
 } ghosts;
 ghosts *add_ghost(ghosts *head, vec *ghost, vec *gdir);
+ghosts *remove_ghost(ghosts *head, int x, int y);
 
 // SECTION: MECHANICS
 void spawn_berries(berrytrack berry_tracker[35][104]);

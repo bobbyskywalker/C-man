@@ -11,6 +11,38 @@ ghosts *add_ghost(ghosts *head, vec *ghost, vec *gdir) {
     return new;
 }
 
+ghosts *remove_ghost(ghosts *head, int x, int y) {
+    ghosts *current = head;
+    ghosts *prev = NULL;
+
+    while (current != NULL) {
+        int ghost_x = current->ghost->x;
+        int ghost_y = current->ghost->y;
+
+        // Calculate Manhattan distance
+        int dist_x = abs(ghost_x - x);
+        int dist_y = abs(ghost_y - y);
+
+        // Check if within a 3-cell radius
+        if (dist_x <= 3 && dist_y <= 3) {
+            if (prev == NULL) {
+                head = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            free(current);
+            return head;  // Ghost removed, return updated list
+        }
+
+        // Move to the next node
+        prev = current;
+        current = current->next;
+    }
+
+    return head;  // No ghost removed, return original list
+}
+
+
 void check_collision(ghosts *ghost, char character, int next_y, int next_x) {
     if (character == '-' || character == '|') {
         if (character == '-') {  // hit horiz wall
