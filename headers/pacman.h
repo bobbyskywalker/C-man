@@ -77,5 +77,6 @@ void free_ghosts(ghosts *head);
 // SECTION: MECHANICS
 void spawn_berries(berrytrack berry_tracker[35][104]);
 void move_ghost(ghosts *ghost);
+void update_orb(vec* orb, int* orb_time, bool* orb_effect);
 
 # endif

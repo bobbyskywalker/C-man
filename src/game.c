@@ -1,5 +1,6 @@
 #include "../headers/pacman.h"
 
+// TODO: game over screen, scores csv saving system, berry spawning
 int gameplay(WINDOW *win) {
     if (stdscr == NULL) {
         printf("Error: stdscr is NULL\n");
@@ -154,29 +155,8 @@ int gameplay(WINDOW *win) {
         draw_borders();
         spawn_berries(berrytracker);
 
-        //power orb spawn/ activate orb effect
-        if (orb_effect == true) {
-            orb.x = rand() % (99 - 21 + 1) + 21;
-            orb.y = rand() % (27 - 4 + 1) + 4;
-            bdcheck = get_char_at(stdscr, orb.y, orb.x);
-            character = bdcheck & A_CHARTEXT;
-            if (character == '_') {
-                orb.y = rand() % (27 - 4 + 1) + 4;
-                orb.x = rand() % (99 - 21 + 1) + 21;
-            } else if (character == '|') {
-                orb.y = rand() % (27 - 4 + 1) + 4;
-                orb.x = rand() % (99 - 21 + 1) + 21;
-            }
-            orb_time--;
-        } else {
-            attron(COLOR_PAIR(69));
-            mvaddch(orb.y, orb.x, '@');
-            attroff(COLOR_PAIR(69));
-        }
-        if (orb_time == 0) {
-            orb_time = 150;
-            orb_effect = false;
-        }
+        //power orb spawn / activate orb effect
+        update_orb(&orb, &orb_time, &orb_effect);
 
         //add pac
         attron(COLOR_PAIR(1));
@@ -233,5 +213,6 @@ int gameplay(WINDOW *win) {
     erase();
     endwin();
     nodelay(stdscr, FALSE);
+    refresh();
     return 0;
 }

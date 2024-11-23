@@ -1,9 +1,6 @@
 #include "curses.h"
 #include "../headers/pacman.h"
 
-#define SCREEN_WIDTH 120
-#define SCREEN_HEIGHT 30
-
 void print_help(int x, int y) {
     char arrows[] = {"Use ARROWKEYS to move"};
     char orbs[] = {"Collect orbs to gain points!"};
@@ -24,7 +21,7 @@ void print_menu() {
     const char opt3[] = "High Scores";
     const char opt4[] = "Exit";
     const char title[] = "-------- C-MAN ---------";
-    bool exit = false, first_enter = true;
+    bool exit = false;
     int selection;
     int highlighted = 1, minmenu = 1, maxmenu = 4;
 
@@ -60,8 +57,9 @@ void print_menu() {
         if (selection == 10) {
             switch (highlighted) {
                 case 1:
-                    first_enter = true;
                     gameplay(win);
+                    init_pair(1, COLOR_WHITE, COLOR_BLUE);
+                    init_pair(56, COLOR_YELLOW, COLOR_BLACK);
                     break;
                 case 2:
                     while (1) {
