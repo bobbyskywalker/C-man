@@ -3,7 +3,7 @@
 ghosts *add_ghost(ghosts *head, vec *ghost, vec *gdir) {
     ghosts *new = malloc(sizeof(ghosts));
     if (new == NULL) {
-        return NULL; // Memory allocation failed
+        return NULL;
     }
     new->ghost = ghost;
     new->gdir = gdir;
@@ -19,29 +19,34 @@ ghosts *remove_ghost(ghosts *head, int x, int y) {
         int ghost_x = current->ghost->x;
         int ghost_y = current->ghost->y;
 
-        // Calculate Manhattan distance
+        // manhattan distance
         int dist_x = abs(ghost_x - x);
         int dist_y = abs(ghost_y - y);
 
-        // Check if within a 3-cell radius
-        if (dist_x <= 3 && dist_y <= 3) {
+        // 3 cell radius check
+        if (dist_x <= 4 && dist_y <= 4) {
             if (prev == NULL) {
                 head = current->next;
             } else {
                 prev->next = current->next;
             }
             free(current);
-            return head;  // Ghost removed, return updated list
+            return head;
         }
-
-        // Move to the next node
         prev = current;
         current = current->next;
     }
-
-    return head;  // No ghost removed, return original list
+    return head;
 }
 
+void free_ghosts(ghosts *head) {
+    ghosts *current = head;
+    while (current != NULL) {
+        ghosts *next = current->next;
+        free(current);
+        current = next;
+    }
+}
 
 void check_collision(ghosts *ghost, char character, int next_y, int next_x) {
     if (character == '-' || character == '|') {

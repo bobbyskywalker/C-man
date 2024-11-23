@@ -24,8 +24,6 @@ void print_menu() {
     const char opt3[] = "High Scores";
     const char opt4[] = "Exit";
     const char title[] = "-------- C-MAN ---------";
-    scoreblock *sorted;
-    FILE *fileptr;
     bool exit = false, first_enter = true;
     int selection;
     int highlighted = 1, minmenu = 1, maxmenu = 4;
@@ -33,19 +31,23 @@ void print_menu() {
     // Initialize the window and check for failure
     WINDOW *win = initscr();
     if (win == NULL) {
+        endwin();
         return;
     }
     nodelay(stdscr, FALSE);
     keypad(win, true);
     noecho();
-    
+    curs_set(0);
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLUE);
+    init_pair(56, COLOR_YELLOW, COLOR_BLACK);
+
     int x = SCREEN_HEIGHT;
     int y = SCREEN_WIDTH;
 
     char welcome[] = "press space...";
     mvprintw(x / 2, y / 2 - strlen(welcome) / 2, welcome);
     do {
-        curs_set(0);
         selection = wgetch(win);
         clear();
 
@@ -84,8 +86,6 @@ void print_menu() {
 
         switch (highlighted) {
             case 1:
-                start_color();
-                init_pair(1, COLOR_WHITE, COLOR_BLUE);
                 attron(COLOR_PAIR(1));
                 attron(A_BOLD);
                 mvprintw(x / 2 - 3, menu_pos_x - strlen(opt1) / 2, "%s", opt1);
@@ -96,9 +96,7 @@ void print_menu() {
                 mvprintw(x / 2, menu_pos_x - strlen(opt4) / 2, "%s", opt4);
                 break;
             case 2:
-                start_color();
                 mvprintw(x / 2 - 3, menu_pos_x - strlen(opt1) / 2, "%s", opt1);
-                init_pair(1, COLOR_WHITE, COLOR_BLUE);
                 attron(COLOR_PAIR(1));
                 attron(A_BOLD);
                 mvprintw(x / 2 - 2, menu_pos_x - strlen(opt2) / 2, "%s", opt2);
@@ -108,10 +106,8 @@ void print_menu() {
                 mvprintw(x / 2, menu_pos_x - strlen(opt4) / 2, "%s", opt4);
                 break;
             case 3:
-                start_color();
                 mvprintw(x / 2 - 3, menu_pos_x - strlen(opt1) / 2, "%s", opt1);
                 mvprintw(x / 2 - 2, menu_pos_x - strlen(opt2) / 2, "%s", opt2);
-                init_pair(1, COLOR_WHITE, COLOR_BLUE);
                 attron(COLOR_PAIR(1));
                 attron(A_BOLD);
                 mvprintw(x / 2 - 1, menu_pos_x - strlen(opt3) / 2, "%s", opt3);
@@ -123,15 +119,12 @@ void print_menu() {
                 mvprintw(x / 2 - 3, menu_pos_x - strlen(opt1) / 2, "%s", opt1);
                 mvprintw(x / 2 - 2, menu_pos_x - strlen(opt2) / 2, "%s", opt2);
                 mvprintw(x / 2 - 1, menu_pos_x - strlen(opt3) / 2, "%s", opt3);
-                init_pair(1, COLOR_WHITE, COLOR_BLUE);
                 attron(COLOR_PAIR(1));
                 attron(A_BOLD);
                 mvprintw(x / 2, menu_pos_x - strlen(opt4) / 2, "%s", opt4);
                 attroff(COLOR_PAIR(1));
                 attroff(A_BOLD);
         }
-
-        init_pair(56, COLOR_YELLOW, COLOR_BLACK);
         attron(COLOR_PAIR(56));
         mvprintw(title_pos_y, menu_pos_x - strlen(title) / 2, title);
         attroff(COLOR_PAIR(56));

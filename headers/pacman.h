@@ -72,6 +72,7 @@ typedef struct ghosts {
 } ghosts;
 ghosts *add_ghost(ghosts *head, vec *ghost, vec *gdir);
 ghosts *remove_ghost(ghosts *head, int x, int y);
+void free_ghosts(ghosts *head);
 
 // SECTION: MECHANICS
 void spawn_berries(berrytrack berry_tracker[35][104]);
