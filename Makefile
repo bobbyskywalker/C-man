@@ -4,7 +4,7 @@ LDFLAGS += -lncurses
 
 NAME = cmangame
 
-SRCS = src/main.c src/game.c src/game_map.c src/utils.c src/menu.c src/levels.c src/ghosts.c
+SRCS = src/main.c src/game.c src/game_map.c src/utils.c src/menu.c src/levels.c src/ghosts.c src/scores.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)

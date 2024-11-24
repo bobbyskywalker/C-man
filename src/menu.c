@@ -73,6 +73,11 @@ void print_menu() {
                     }
                     break;
                 case 3:
+                        erase();
+                        print_scores(x, y);
+                        getch();
+                        erase();
+                        refresh();
                     break;
                 case 4:
                     exit = true;
@@ -141,9 +146,11 @@ void game_over_screen(WINDOW *win, int score) {
     attron(COLOR_PAIR(6));
     mvprintw(SCREEN_HEIGHT / 2 - 5, SCREEN_WIDTH / 2 - strlen(game_over), "%s", game_over);
     attroff(COLOR_PAIR(6));
+    attron(COLOR_PAIR(69));
     mvprintw(SCREEN_HEIGHT / 2 - 3, SCREEN_WIDTH / 2 - strlen(game_over), "Your score: %d", score);
-    mvprintw(SCREEN_HEIGHT / 2 + 10, SCREEN_WIDTH / 2 - strlen(game_over), "Press q to quit");
+    attroff(COLOR_PAIR(69));
     refresh();
+    get_initials("Enter 3 initials: ", score);
     int pressed = 0;
     while (pressed != 'q')
         pressed = wgetch(win);

@@ -23,7 +23,7 @@ int gameplay(WINDOW *win) {
     init_pair(6, COLOR_RED, COLOR_BLACK);
 
     // hud
-    int score = 0;
+    int score = 1;
     int lives = 3;
     int time = 60;
     int timer = 0;

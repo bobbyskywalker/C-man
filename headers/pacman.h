@@ -29,6 +29,7 @@
 
 // SECTION: INCLUDES
 #include <stdlib.h>
+#include <ctype.h>
 #include <unistd.h>
 #include <time.h>
 #include <stdint.h>
@@ -60,11 +61,6 @@ typedef struct berrytrack {
     bool iseaten;
 } berrytrack;
 
-typedef struct scoreblock {
-    int score;
-    char initials[3];
-} scoreblock;
-
 // SECTION: GHOSTS LIST
 typedef struct ghosts {
     vec *ghost;
@@ -79,5 +75,14 @@ void free_ghosts(ghosts *head);
 void spawn_berries(berrytrack berry_tracker[35][104]);
 void move_ghost(ghosts *ghost);
 void update_orb(vec* orb, int* orb_time, bool* orb_effect);
+
+
+// SECTION: SCORE SAVING
+bool get_initials(const char *prompt, int score);
+typedef struct score_block {
+    int score;
+    char initials[3];
+} score_block;
+void print_scores();
 
 # endif

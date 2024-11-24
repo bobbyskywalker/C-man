@@ -1,4 +1,3 @@
-#include "curses.h"
 #include "../headers/pacman.h"
 
 // spawning berries, generic, adjustable loop
