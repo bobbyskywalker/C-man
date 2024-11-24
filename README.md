@@ -6,7 +6,7 @@ A Pac-Man-inspired game, written in C using the Ncurses library.
 
 ## **Demo**
 ![Main Menu](assets/menu.png)  
-![Gameplay](assets/game.png)  
+![Gameplay](assets/gameplay.png)  
 
 ---
 
