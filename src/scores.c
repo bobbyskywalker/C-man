@@ -43,7 +43,7 @@ bool get_initials(const char *prompt, int score)
     }
 }
 
-score_block* read_scores() {
+score_block* read_scores(int *no_scores) {
     FILE *scores_file = fopen("scores.txt", "r");
     if (scores_file == NULL) {
         perror("Error opening scores.txt");
@@ -67,10 +67,10 @@ score_block* read_scores() {
     size_t read_size = fread(buffer, 1, file_size, scores_file);
     buffer[read_size] = '\0';
 
-    int no_scores = 0;
+    *no_scores = 0;
     for (int i = 0; buffer[i]; i++) {
         if (buffer[i] == '\n')
-            no_scores++;
+            (*no_scores)++;
     }
 
     if (no_scores == 0) {
@@ -79,7 +79,7 @@ score_block* read_scores() {
         return NULL;
     }
 
-    score_block *scores_array = (score_block *)malloc((no_scores + 1) * sizeof(score_block) + 1);
+    score_block *scores_array = (score_block *)malloc((*no_scores + 1) * sizeof(score_block) + 1);
     if (!scores_array) {
         free(buffer);
         fclose(scores_file);
@@ -138,27 +138,25 @@ void sort_scores(score_block *scores_array, int no_scores) {
 }
 
 void print_scores() {
-    int no_scores = 0;
-    score_block *scores_array = read_scores();
+    int *no_scores = malloc(sizeof(int));
+    score_block *scores_array = read_scores(no_scores);
     if (scores_array == NULL) {
         mvprintw(SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2 - 10, "No scores available.\n");
         return;
     }
-    while (scores_array[no_scores].score != 0) {
-        no_scores++;
-    }
-    sort_scores(scores_array, no_scores);
+    sort_scores(scores_array, *no_scores);
     init_pair(55, COLOR_GREEN, COLOR_BLACK);
     attron(COLOR_PAIR(55));
     mvprintw(SCREEN_HEIGHT / 2 - 7, SCREEN_WIDTH / 2 - 10, "High Scores:\n");
     attroff(COLOR_PAIR(55));
     int limit;
-    if (no_scores < 10)
-        limit = no_scores;
+    if (*no_scores < 10)
+        limit = *no_scores;
     else
         limit = 10;
     for (int i = 0; i < limit; i++) {
         mvprintw(10 + i, SCREEN_WIDTH / 2 - 10, "%d.%s %d\n", i + 1, scores_array[i].initials, scores_array[i].score);
     }
+    free(no_scores);
     free(scores_array);
 }

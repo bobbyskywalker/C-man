@@ -1,6 +1,5 @@
 #include "../headers/pacman.h"
 
-// TODO: scores csv saving system
 int gameplay(WINDOW *win) {
     if (stdscr == NULL) {
         printf("Error: stdscr is NULL\n");
