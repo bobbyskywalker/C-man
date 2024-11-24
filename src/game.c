@@ -1,15 +1,16 @@
 #include "../headers/pacman.h"
 
-// TODO: game over screen, scores csv saving system, berry spawning
+// TODO: scores csv saving system
 int gameplay(WINDOW *win) {
     if (stdscr == NULL) {
         printf("Error: stdscr is NULL\n");
         return -1;
     }
     //initialize screen
-    int screenwidth, screenheight;
     erase();
     curs_set(0);
+    keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
     noecho();
     start_color();
 
@@ -26,23 +27,21 @@ int gameplay(WINDOW *win) {
     int lives = 3;
     int time = 60;
     int timer = 0;
-    char lifestr[] = "<3:";
+    char lifestr[] = "LIVES";
     char timestr[] = "TIME:";
-    getmaxyx(stdscr, screenheight, screenwidth);
-    keypad(stdscr, TRUE);
-    nodelay(stdscr, TRUE);
-
-    // game timer setup
-    float accumulated_time = 0;
-    const float seconds_per_update = 1.0f;
 
     //pac-man variables
     vec pacman = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
     vec dir = {1, 0};
 
     //berry array and copy for reset
-    berrytrack berrytracker[35][104];
-    berrytrack berrytracker_copy[35][104];
+    berrytrack berrytracker[BERRY_TRACKER_ROWS][BERRY_TRACKER_COLS];
+    for (int i = 0; i < BERRY_TRACKER_ROWS; i++) {
+        for (int j = 0; j < BERRY_TRACKER_COLS; j++) {
+            berrytracker[i][j].iseaten = false;
+        }
+    }
+    berrytrack berrytracker_copy[BERRY_TRACKER_ROWS][BERRY_TRACKER_COLS];
     memcpy(berrytracker_copy, berrytracker, sizeof(berrytracker));
 
     //orb variables
@@ -63,12 +62,10 @@ int gameplay(WINDOW *win) {
     for (int i = 0; i < 4; i++) 
     {
         gh[i] = malloc(sizeof(vec));
-        if (!gh) exit(EXIT_FAILURE);
         gh[i]->x = ghosts_start_pos[i][0];
         gh[i]->y = ghosts_start_pos[i][1];
 
         gdir[i] = malloc(sizeof(vec));
-        if (!gdir) exit(EXIT_FAILURE);
         gdir[i]->x = 1;
         gdir[i]->y = 0; 
         head = add_ghost(head, gh[i], gdir[i]);
@@ -137,7 +134,7 @@ int gameplay(WINDOW *win) {
             
         // berry consumption mechanism, score update
         if (character == '.') {
-            berrytracker[pacman.y - 4][pacman.x - 22].iseaten = true;
+            berrytracker[pacman.y - BERRY_START_ROW][pacman.x - BERRY_START_COL].iseaten = true;
             score++;
         }
 
@@ -180,10 +177,8 @@ int gameplay(WINDOW *win) {
         mvprintw(2, 95 - 6, "SCORE:");
         mvprintw(2, 95, "%d", score);
         attron(COLOR_PAIR(6));
-        mvprintw(2, SCREEN_WIDTH / 2 - sizeof(lifestr) + 10, lifestr);
-        mvprintw(2, SCREEN_WIDTH / 2 - sizeof(lifestr) + 13, "%d", lives);
-        mvprintw(2, SCREEN_WIDTH / 2 - sizeof(timestr) - 5, timestr);
-        mvprintw(2, SCREEN_WIDTH / 2 - sizeof(timestr) + 3, "%d", time);
+        mvprintw(2, SCREEN_WIDTH / 2 - sizeof(lifestr) + 10, "LIVES: %d", lives);
+        mvprintw(2, SCREEN_WIDTH / 2 - sizeof(timestr) - 5, "TIME: %d", time);
 
         // timing control
         timer++;
@@ -209,10 +204,9 @@ int gameplay(WINDOW *win) {
         free(gdir[i]);
     }
 
-    //game over screen
+    game_over_screen(win, score);
     erase();
     endwin();
-    nodelay(stdscr, FALSE);
     refresh();
     return 0;
 }

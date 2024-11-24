@@ -11,7 +11,7 @@ void update_orb(vec* orb, int* orb_time, bool* orb_effect) {
     if (*orb_effect) {
         do {
             orb->x = rand() % (HORIZONTAL_BORDER_END - HORIZONTAL_BORDER_START + 1) + HORIZONTAL_BORDER_START;
-            orb->y = rand() % (BORDER_BOTTOM - BORDER_TOP + 1) + BORDER_TOP;
+            orb->y = rand() % (BORDER_BOTTOM - (BORDER_TOP + 5) + 1) + (BORDER_TOP + 5);
             chtype bdcheck = get_char_at(stdscr, orb->y, orb->x);
             character = bdcheck & A_CHARTEXT;
         } while (character == '_' || character == '|');

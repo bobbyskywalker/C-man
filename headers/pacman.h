@@ -39,6 +39,7 @@
 // SECTION: MAIN
 void print_menu();
 int gameplay(WINDOW *win);
+void game_over_screen(WINDOW *win, int score);
 
 // SECTION: GRAPHICS
 void draw_borders();

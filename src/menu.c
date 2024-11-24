@@ -2,16 +2,17 @@
 #include "../headers/pacman.h"
 
 void print_help(int x, int y) {
+    (void) x;
     char arrows[] = {"Use ARROWKEYS to move"};
     char orbs[] = {"Collect orbs to gain points!"};
     char ghosts[] = {"Avoid ghosts! If you lose 3 lives, game over :(("};
     char powerorbs[] = {"Power orbs let you eat ghosts! Eat a ghost for 100 bonus points!"};
     init_pair(69, COLOR_WHITE, COLOR_BLUE);
     attron(COLOR_PAIR(69));
-    mvprintw(7, y / 2 - strlen(arrows) / 2, arrows);
-    mvprintw(9, y / 2 - strlen(orbs) / 2, orbs);
-    mvprintw(11, y / 2 - strlen(ghosts) / 2, ghosts);
-    mvprintw(13, y / 2 - strlen(powerorbs) / 2, powerorbs);
+    mvprintw(7, y / 2 - strlen(arrows) / 2, "%s", arrows);
+    mvprintw(9, y / 2 - strlen(orbs) / 2, "%s", orbs);
+    mvprintw(11, y / 2 - strlen(ghosts) / 2, "%s", ghosts);
+    mvprintw(13, y / 2 - strlen(powerorbs) / 2, "%s", powerorbs);
     attroff(COLOR_PAIR(69));
 }
 
@@ -43,7 +44,7 @@ void print_menu() {
     int y = SCREEN_WIDTH;
 
     char welcome[] = "press space...";
-    mvprintw(x / 2, y / 2 - strlen(welcome) / 2, welcome);
+    mvprintw(x / 2, y / 2 - strlen(welcome) / 2, "%s", welcome);
     do {
         selection = wgetch(win);
         clear();
@@ -131,4 +132,19 @@ void print_menu() {
 
     wgetch(win);
     endwin();
+}
+
+void game_over_screen(WINDOW *win, int score) {
+    char game_over[] = "GAME OVER";
+    erase();
+    nodelay(stdscr, FALSE);
+    attron(COLOR_PAIR(6));
+    mvprintw(SCREEN_HEIGHT / 2 - 5, SCREEN_WIDTH / 2 - strlen(game_over), "%s", game_over);
+    attroff(COLOR_PAIR(6));
+    mvprintw(SCREEN_HEIGHT / 2 - 3, SCREEN_WIDTH / 2 - strlen(game_over), "Your score: %d", score);
+    mvprintw(SCREEN_HEIGHT / 2 + 10, SCREEN_WIDTH / 2 - strlen(game_over), "Press q to quit");
+    refresh();
+    int pressed = 0;
+    while (pressed != 'q')
+        pressed = wgetch(win);
 }
