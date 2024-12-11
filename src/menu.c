@@ -74,7 +74,7 @@ void print_menu() {
                     break;
                 case 3:
                         erase();
-                        print_scores(x, y);
+                        print_scores();
                         getch();
                         erase();
                         refresh();
